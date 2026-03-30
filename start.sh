@@ -1,3 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo "Starting Metabase..."
-java -jar metabase.jar
+# Use the port provided by Render
+java -jar metabase.jar --port $PORT

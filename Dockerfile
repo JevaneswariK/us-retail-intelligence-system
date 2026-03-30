@@ -1,18 +1,18 @@
-# Use Temurin OpenJDK 17 (Debian-based)
-FROM eclipse-temurin:17-jdk
+# Use Java 21 (Temurin)
+FROM eclipse-temurin:21-jdk
 
 # Set working directory
 WORKDIR /app
 
-# Copy start script
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+# Copy Metabase JAR and start script
+COPY metabase.jar .
+COPY start.sh .
 
-# Download Metabase latest jar
-RUN curl -L https://downloads.metabase.com/latest/metabase.jar -o metabase.jar
+# Make start.sh executable
+RUN chmod +x start.sh
 
-# Expose default Metabase port
+# Expose the port (Render will override with $PORT)
 EXPOSE 3000
 
 # Start Metabase
-CMD ["/app/start.sh"]
+CMD ["./start.sh"]
