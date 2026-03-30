@@ -1,4 +1,5 @@
-FROM openjdk:11-jdk-slim
+# Use a specific, valid OpenJDK 11 image
+FROM openjdk:11.0.20-jdk-slim
 
 WORKDIR /app
 
