@@ -1,5 +1,5 @@
-# Use Eclipse Temurin OpenJDK 11 (widely mirrored, always available)
-FROM eclipse-temurin:11-jdk
+# Use Temurin OpenJDK 17 (LTS) for Metabase
+FROM eclipse-temurin:17-jdk
 
 # Set working directory
 WORKDIR /app
