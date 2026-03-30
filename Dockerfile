@@ -1,14 +1,18 @@
-# Use Temurin OpenJDK 17 (LTS)
-FROM eclipse-temurin:17-jdk:alpine
+# Use Temurin OpenJDK 17 (Debian-based)
+FROM eclipse-temurin:17-jdk
 
 # Set working directory
 WORKDIR /app
 
-# Download latest Metabase jar (version 0.55.7 recommended for Java 17)
-RUN curl -L https://downloads.metabase.com/v0.55.7/metabase.jar -o metabase.jar
+# Copy start script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
-# Expose Metabase port
+# Download Metabase latest jar
+RUN curl -L https://downloads.metabase.com/latest/metabase.jar -o metabase.jar
+
+# Expose default Metabase port
 EXPOSE 3000
 
-# Run Metabase
-CMD ["java", "-jar", "metabase.jar"]
+# Start Metabase
+CMD ["/app/start.sh"]
