@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: metabase
+    runtime: docker
+    plan: free
+    envVars:
+      - key: JAVA_TOOL_OPTIONS
+        value: "-Xmx512m"
+      - key: MB_DB_FILE
+        value: /app/metabase.db
+    disk:
+      name: metabase-data
+      mountPath: /app
+      sizeGB: 1
