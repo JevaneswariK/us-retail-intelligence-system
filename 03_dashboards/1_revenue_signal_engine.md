@@ -1,98 +1,38 @@
-# 📊 Revenue Signal Engine: U.S. Retail Macro Performance (1992–2025)
+# Dashboard 1 — Revenue Signal Engine  
+U.S. Retail Macro Performance (1992–2025)
 
-## 🎯 Objective
+## Overview
+The Revenue Signal Engine is used to analyze the long-term performance of the U.S. retail sector.  
+It converts raw sales data into meaningful revenue insights.
 
-Analyze long-term U.S. retail performance to understand market size, growth momentum, and category-level contribution using Census retail data.
+The main focus is to understand growth patterns, category concentration, and unusual changes in revenue over a long period of time.
 
----
+## Problem Statement
+Retail data is not always stable. It is affected by seasonality, economic changes, and category-level variations.
 
-## 📌 Key KPIs
+The goal here is to separate real long-term growth from short-term fluctuations and noise in the data.
 
-### 💰 Total Market Size
+## Approach
+- Aggregated transaction-level data into monthly revenue  
+- Used window functions (LAG) to calculate growth trends  
+- Ranked categories based on revenue contribution  
+- Applied Z-score method to detect anomalies  
 
-* Represents the overall scale of the U.S. retail industry
-* Helps understand macro-level economic expansion
+## Key Metrics
+- **Total Market Size** → Overall industry revenue  
+- **Average Monthly Revenue** → Baseline demand level  
+- **MoM Growth Rate** → Monthly growth trend  
+- **Top Demand Driver** → Highest revenue category  
 
-### 📊 Average Monthly Revenue
+## Key Findings
+- Retail shows steady growth with faster increase after 2020  
+- Revenue is concentrated in a few top categories (~65–70%)  
+- Most anomalies are short-term and not structural  
+- E-commerce and retail (excluding auto) are major growth drivers  
 
-* Defines baseline revenue performance
-* Useful for benchmarking normal business conditions
+## Business Interpretation
+This analysis helps to:
 
-### 📈 MoM Growth Rate
-
-* Measures short-term revenue momentum
-* Indicates acceleration or slowdown in demand
-
-### 🏆 Top Demand Driver
-
-* Identifies the highest revenue-generating category
-* Highlights dominant sector in the retail market
-
----
-
-## 📈 Charts & Analysis
-
-### 📊 1. Revenue Trend (1992–2025)
-
-* Shows steady long-term growth with post-2020 acceleration
-* Indicates resilience of the retail sector over time
-
----
-
-### 🥧 2. Market Concentration (Top Categories vs Others)
-
-* Top 5 categories contribute ~67% of total revenue
-* Indicates **moderate market concentration**
-* Heavy reliance on key segments
-
----
-
-### 📊 3. Top Categories by YoY Growth
-
-* E-commerce and Warehouse Clubs lead growth
-* Reflects shift toward **digital and bulk consumption trends**
-
----
-
-### 📊 4. Market Share Change by Category
-
-* E-commerce shows strongest share gain
-* Traditional retail categories show slower growth or decline
-* Indicates structural transformation in the retail landscape
-
----
-
-### 🚨 5. Revenue Trend with Anomaly Detection
-
-* Uses Z-score to detect unusual spikes/drops
-* Anomalies clustered post-2020
-* Suggests **short-term demand shocks rather than structural instability**
-
----
-
-## 📸 Dashboard Preview
-
-![Revenue Dashboard](../04_assets/revenue_signal_engine.jpeg)
-
----
-
-## 🔗 Live Dashboard
-
-https://nonperceptible-tawanda-untautly.ngrok-free.dev/public/dashboard/3b53f531-d42d-41fe-9bb6-dd97434c0620
-
-⚠️ *Note: This is a temporary ngrok link. If unavailable, refer to the screenshot above.*
-
----
-
-## 🧠 Business Insights
-
-* U.S. retail shows **strong long-term expansion** with periodic volatility
-* Growth is increasingly driven by **e-commerce and modern retail formats**
-* Market is moderately concentrated, with key categories dominating revenue
-* Post-2020 anomalies indicate **external shocks (e.g., demand spikes)** rather than structural decline
-
----
-
-## 🎯 Key Takeaway
-
-This dashboard provides a macro-level view of retail dynamics, enabling quick identification of growth trends, dominant sectors, and demand anomalies for strategic decision-making.
+- Understand the difference between trend and noise  
+- Identify important growth periods  
+- Recognize dependency on key categories  

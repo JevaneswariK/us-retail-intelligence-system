@@ -1,9 +1,0 @@
-# Ignore the Metabase jar
-metabase.jar
-
-# Ignore Python cache
-__pycache__/
-*.pyc
-
-# Ignore notebook checkpoints
-.ipynb_checkpoints/metabase.jar

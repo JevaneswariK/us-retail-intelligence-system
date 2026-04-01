@@ -1,252 +1,184 @@
--- ============================================
+-- ======================================================
 -- Dashboard 1: Revenue Signal Engine
 -- U.S. Retail Macro Performance (1992–2025)
--- ============================================
+-- ======================================================
+
+-- 1. Total Market Size
+SELECT 
+    CASE 
+        WHEN SUM(sales) IS NULL THEN NULL
+        WHEN SUM(sales) >= 1e9 THEN '$' || ROUND(SUM(sales)/1e9, 1) || 'B'
+        WHEN SUM(sales) >= 1e6 THEN '$' || ROUND(SUM(sales)/1e6, 1) || 'M'
+        WHEN SUM(sales) >= 1e3 THEN '$' || ROUND(SUM(sales)/1e3, 1) || 'K'
+        ELSE '$' || ROUND(SUM(sales), 0)
+    END AS total_market_size
+FROM retail_monthly_sales
+WHERE 1=1
+[[AND {{sales_year}}]];
 
 
--- ============================================
--- KPI 1: Total Market Size
--- ============================================
-WITH base AS (
-    SELECT SUM(sales) AS total
-    FROM retail_monthly_sales 
-    WHERE 1=1
-    [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
-)
-SELECT
-CASE
-    WHEN total IS NULL THEN NULL
-    WHEN total >= 1000000000 THEN CONCAT('$', ROUND(total / 1000000000.0, 1), 'B')
-    WHEN total >= 1000000 THEN CONCAT('$', ROUND(total / 1000000.0, 1), 'M')
-    WHEN total >= 1000 THEN CONCAT('$', ROUND(total / 1000.0, 1), 'K')
-    ELSE CONCAT('$', ROUND(total, 0))
-END AS total_revenue
-FROM base;
-
-
--- ============================================
--- KPI 2: Average Monthly Revenue
--- ============================================
-WITH monthly AS (
-    SELECT
-        DATE_TRUNC('month', sales_date) AS month,
-        SUM(sales) AS revenue 
-    FROM retail_monthly_sales
-    WHERE 1=1 
-    [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
-    GROUP BY 1
-)
-SELECT
-CASE
-    WHEN AVG(revenue) IS NULL THEN NULL
-    WHEN AVG(revenue) >= 1000000000 THEN CONCAT('$', ROUND(AVG(revenue)/1000000000.0,1),'B')
-    WHEN AVG(revenue) >= 1000000 THEN CONCAT('$', ROUND(AVG(revenue)/1000000.0,1),'M')
-    WHEN AVG(revenue) >= 1000 THEN CONCAT('$', ROUND(AVG(revenue)/1000.0,1),'K')
-    ELSE CONCAT('$', ROUND(AVG(revenue),0))
-END AS avg_monthly_revenue
-FROM monthly;
-
-
--- ============================================
--- KPI 3: MoM Growth Rate
--- ============================================
-WITH monthly AS (
-    SELECT
+-- 2. Average Monthly Revenue
+WITH monthly_data AS (
+    SELECT 
         DATE_TRUNC('month', sales_date) AS month,
         SUM(sales) AS revenue
-    FROM retail_monthly_sales 
+    FROM retail_monthly_sales
     WHERE 1=1
     [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
-    GROUP BY 1 
-),
-calc AS (
-    SELECT
-        month,
-        revenue, 
-        LAG(revenue) OVER (ORDER BY month) AS prev_revenue
-    FROM monthly
+    GROUP BY 1
 )
-SELECT
-ROUND((revenue - prev_revenue) / NULLIF(prev_revenue,0), 2) AS mom_growth_percent
-FROM calc
-WHERE prev_revenue IS NOT NULL
+SELECT 
+    CASE 
+        WHEN AVG(revenue) >= 1e9 THEN '$' || ROUND(AVG(revenue)/1e9,1) || 'B'
+        WHEN AVG(revenue) >= 1e6 THEN '$' || ROUND(AVG(revenue)/1e6,1) || 'M'
+        WHEN AVG(revenue) >= 1e3 THEN '$' || ROUND(AVG(revenue)/1e3,1) || 'K'
+        ELSE '$' || ROUND(AVG(revenue),0)
+    END AS avg_monthly_revenue
+FROM monthly_data;
+
+
+-- 3. MoM Growth Rate
+WITH monthly_data AS (
+    SELECT 
+        DATE_TRUNC('month', sales_date) AS month,
+        SUM(sales) AS revenue
+    FROM retail_monthly_sales
+    WHERE 1=1
+    [[AND {{sales_year}}]]
+    GROUP BY 1
+)
+SELECT 
+    ROUND(
+        (revenue - LAG(revenue) OVER (ORDER BY month)) 
+        / NULLIF(LAG(revenue) OVER (ORDER BY month),0),
+    2) AS mom_growth_rate
+FROM monthly_data
 ORDER BY month DESC
 LIMIT 1;
 
 
--- ============================================
--- KPI 4: Top Demand Driver
--- ============================================
-WITH agg AS (
-    SELECT 
-        category_short_name,
-        SUM(sales) AS revenue
-    FROM retail_monthly_sales   
-    WHERE 1=1
-    [[AND {{sales_year}}]] 
-    [[AND {{business_segment}}]]
-    GROUP BY category_short_name
-)
+-- 4. Top Demand Driver
 SELECT category_short_name
-FROM agg
-ORDER BY revenue DESC
+FROM retail_monthly_sales
+WHERE 1=1
+[[AND {{sales_year}}]]
+GROUP BY category_short_name
+ORDER BY SUM(sales) DESC
 LIMIT 1;
 
 
--- ============================================
--- CHART 1: Market Concentration
--- ============================================
-WITH category_sales AS (
-    SELECT
+-- ======================================================
+-- Charts
+-- ======================================================
+
+-- 5. Market Concentration (Top 5 vs Others)
+WITH ranked_categories AS (
+    SELECT 
         category_short_name,
-        SUM(sales) AS revenue
+        SUM(sales) AS revenue,
+        RANK() OVER (ORDER BY SUM(sales) DESC) AS rnk
     FROM retail_monthly_sales
     WHERE 1=1
     [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
     GROUP BY category_short_name
-),
-ranked AS (
-    SELECT
-        category_short_name,
-        revenue,
-        RANK() OVER (ORDER BY revenue DESC) AS rnk
-    FROM category_sales
-),
-grouped AS (
-    SELECT
-        CASE 
-            WHEN rnk <= 5 THEN 'Top 5 Categories'
-            ELSE 'Others'
-        END AS group_name,
-        SUM(revenue) AS total_revenue
-    FROM ranked
-    GROUP BY 1
 )
-SELECT
-    group_name,
-    total_revenue,
-    ROUND(total_revenue / SUM(total_revenue) OVER () * 100, 2) AS share_percent
-FROM grouped;
+SELECT 
+    CASE 
+        WHEN rnk <= 5 THEN 'Top 5 Categories'
+        ELSE 'Others'
+    END AS category_group,
+    SUM(revenue) AS total_revenue,
+    ROUND(SUM(revenue) * 100.0 / SUM(SUM(revenue)) OVER (), 2) AS share_percent
+FROM ranked_categories
+GROUP BY category_group;
 
 
--- ============================================
--- CHART 2: Top Categories by YoY Growth
--- ============================================
-WITH yearly AS (
-    SELECT
+-- 6. Top Categories by YoY Growth
+WITH yearly_data AS (
+    SELECT 
         EXTRACT(YEAR FROM sales_date) AS year,
         category_short_name,
         SUM(sales) AS revenue
     FROM retail_monthly_sales
     WHERE 1=1
     [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
     GROUP BY 1,2
 ),
-growth AS (
-    SELECT
+growth_calc AS (
+    SELECT 
         category_short_name,
-        year,
-        revenue,
-        LAG(revenue) OVER (PARTITION BY category_short_name ORDER BY year) AS prev_revenue
-    FROM yearly
-),
-calc AS (
-    SELECT
-        category_short_name,
-        ((revenue - prev_revenue) / NULLIF(prev_revenue,0)) * 100 AS yoy_growth
-    FROM growth
-    WHERE prev_revenue IS NOT NULL
+        (revenue - LAG(revenue) OVER (PARTITION BY category_short_name ORDER BY year)) 
+        / NULLIF(LAG(revenue) OVER (PARTITION BY category_short_name ORDER BY year),0) * 100 AS growth
+    FROM yearly_data
 )
-SELECT
+SELECT 
     category_short_name,
-    ROUND(AVG(yoy_growth),2) AS avg_growth_percent
-FROM calc
+    ROUND(AVG(growth),2) AS avg_yoy_growth
+FROM growth_calc
+WHERE growth IS NOT NULL
 GROUP BY category_short_name
-ORDER BY avg_growth_percent DESC
+ORDER BY avg_yoy_growth DESC
 LIMIT 10;
 
 
--- ============================================
--- CHART 3: Market Share Change
--- ============================================
-WITH yearly AS (
-    SELECT
+-- 7. Market Share Change by Category
+WITH yearly_data AS (
+    SELECT 
         EXTRACT(YEAR FROM sales_date) AS year,
         category_short_name,
         SUM(sales) AS revenue
     FROM retail_monthly_sales
     WHERE 1=1
     [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
     GROUP BY 1,2
 ),
-share AS (
-    SELECT
+market_share AS (
+    SELECT 
         year,
         category_short_name,
-        revenue,
-        revenue / SUM(revenue) OVER (PARTITION BY year) * 100 AS share_percent
-    FROM yearly
+        revenue * 100.0 / SUM(revenue) OVER (PARTITION BY year) AS share
+    FROM yearly_data
 ),
 bounds AS (
-    SELECT MIN(year) AS start_year, MAX(year) AS end_year
-    FROM yearly
-),
-change_calc AS (
-    SELECT
-        s.category_short_name,
-        MAX(CASE WHEN s.year = b.start_year THEN s.share_percent END) AS start_share,
-        MAX(CASE WHEN s.year = b.end_year THEN s.share_percent END) AS end_share
-    FROM share s
-    CROSS JOIN bounds b
-    GROUP BY s.category_short_name
+    SELECT MIN(year) AS start_year, MAX(year) AS end_year FROM yearly_data
 )
-SELECT
-    category_short_name,
-    ROUND(end_share - start_share,2) AS share_change
-FROM change_calc
-WHERE end_share IS NOT NULL AND start_share IS NOT NULL
+SELECT 
+    m.category_short_name,
+    ROUND(
+        MAX(CASE WHEN year = start_year THEN share END) -
+        MAX(CASE WHEN year = end_year THEN share END)
+    ,2) * -1 AS share_change
+FROM market_share m, bounds
+GROUP BY m.category_short_name
+HAVING 
+    MAX(CASE WHEN year = start_year THEN share END) IS NOT NULL
+    AND MAX(CASE WHEN year = end_year THEN share END) IS NOT NULL
 ORDER BY share_change DESC
 LIMIT 10;
 
 
--- ============================================
--- CHART 4: Revenue Trend + Anomaly Detection
--- ============================================
-WITH monthly AS (
-    SELECT
+-- 8. Revenue Trend with Anomaly Detection
+WITH monthly_data AS (
+    SELECT 
         DATE_TRUNC('month', sales_date) AS month,
         SUM(sales) AS revenue
-    FROM retail_monthly_sales 
+    FROM retail_monthly_sales
     WHERE 1=1
     [[AND {{sales_year}}]]
-    [[AND {{business_segment}}]]
     GROUP BY 1
 ),
 stats AS (
-    SELECT
-        AVG(revenue) AS mean,
-        STDDEV(revenue) AS std
-    FROM monthly
-),
-calc AS (
-    SELECT
-        m.month,
-        m.revenue,
-        (m.revenue - s.mean) / NULLIF(s.std,0) AS z_score
-    FROM monthly m
-    CROSS JOIN stats s
+    SELECT 
+        AVG(revenue) AS avg_rev,
+        STDDEV(revenue) AS std_dev
+    FROM monthly_data
 )
-SELECT
-    month,
-    CASE WHEN ABS(z_score) < 2 THEN revenue END AS normal_revenue,
-    CASE WHEN ABS(z_score) >= 2 THEN revenue END AS anomaly_revenue
-FROM calc
-ORDER BY month;
-
-
+SELECT 
+    m.month,
+    CASE WHEN ABS((m.revenue - s.avg_rev)/NULLIF(s.std_dev,0)) < 2 
+         THEN m.revenue END AS normal_revenue,
+    CASE WHEN ABS((m.revenue - s.avg_rev)/NULLIF(s.std_dev,0)) >= 2 
+         THEN m.revenue END AS anomaly_revenue
+FROM monthly_data m
+CROSS JOIN stats s
+ORDER BY m.month;

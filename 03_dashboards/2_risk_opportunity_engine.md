@@ -1,93 +1,46 @@
-# ⚠️ Risk & Opportunity Engine: Volatility, Growth & Forecast Signals
+#  Dashboard 2 — Risk & Opportunity Engine  
+### Volatility, Growth & Forecast Signals
 
-## 🎯 Objective
+## Overview
 
-Analyze retail demand stability, volatility, and growth patterns to identify risk zones and high-opportunity segments using statistical and time-series signals.
+The Risk & Opportunity Engine is used to measure volatility, stability, and future trends in retail demand.  
+It converts raw revenue fluctuations into meaningful risk and opportunity insights.
 
----
+## Problem Statement
 
-## 📌 Key KPIs
+Growth alone is not enough. Businesses also need to understand:
 
-### 📉 Revenue Stability Index
+- How stable the growth is  
+- Where volatility creates risk  
+- Which segments offer consistent opportunities  
 
-Measures overall volatility in sales. Lower values indicate stable revenue patterns.
+## Approach
 
-### 📊 Demand Variability Index
+- Measured volatility using Coefficient of Variation (CV)  
+- Applied rolling averages to smooth demand patterns  
+- Built spike/drop logic for shock detection  
+- Segmented categories using median-based risk classification  
+- Used trend slope for simple forecasting  
 
-Captures fluctuations in monthly demand, highlighting uncertainty in consumption.
+## Key Metrics
 
-### 🟢 Revenue Consistency Ratio
+- **Revenue Stability Index** → Volatility relative to mean  
+- **Demand Variability Index** → Level of fluctuation  
+- **Revenue Consistency Ratio** → Predictability of revenue  
+- **Market Concentration Risk** → Dependence on top category  
 
-Represents how predictable revenue is over time. Higher values indicate stable performance.
+## Key Findings
 
-### ⚠️ Market Concentration Risk
+- Overall demand shows stable growth with controlled volatility  
+- Large categories act as stable demand anchors (low CV)  
+- Smaller categories show higher variability and risk  
+- Forecast indicates continued growth without major instability  
 
-Shows dependency on top-performing categories. Higher concentration implies higher risk exposure.
+## Business Interpretation
 
----
+This analysis helps stakeholders to:
 
-## 📈 Charts & Analysis
-
-### 📊 1. Revenue Deviations & Shock Detection
-
-* Identifies spikes and drops relative to moving average
-* Highlights short-term disruptions in demand
-
----
-
-### 🎯 2. Category Risk Distribution (Scale vs Volatility)
-
-* Segments categories into:
-
-  * Stable High
-  * Risky High
-  * Stable Low
-  * Weak/Risky
-* Helps identify safe vs risky investment zones
-
----
-
-### ⚖️ 3. Growth vs Volatility Matrix
-
-* Plots growth against deviation
-* Highlights:
-
-  * Growing & stable categories (opportunity zones)
-  * Declining & volatile categories (risk zones)
-
----
-
-### 📈 4. Revenue Forecast & Trend
-
-* Projects future revenue based on trend slope
-* Indicates continued growth with controlled fluctuations
-
----
-
-## 📸 Dashboard Preview
-
-![Risk Dashboard](../04_assets/risk_opportunity_engine.jpeg)
-
----
-
-## 🔗 Live Dashboard
-
-https://nonperceptible-tawanda-untautly.ngrok-free.dev/public/dashboard/3b53f531-d42d-41fe-9bb6-dd97434c0620
-
-⚠️ *Note: This is a temporary ngrok link.*
-
----
-
-## 🧠 Business Insights
-
-* Retail demand shows **controlled volatility**, not structural instability
-* High-revenue categories tend to be **more stable**, acting as anchors
-* Smaller categories exhibit **higher variability and risk exposure**
-* Growth opportunities exist in segments with **high growth but low volatility**
-* Forecast indicates **continued upward trend with manageable risk levels**
-
----
-
-## 🎯 Key Takeaway
-
-This dashboard enables identification of stable growth segments and high-risk areas, supporting better strategic decisions in retail investment and demand planning.
+- Identify high-risk and stable segments  
+- Make better investment decisions  
+- Improve forecasting accuracy  
+- Detect demand shocks early  
