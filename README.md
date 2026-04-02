@@ -6,7 +6,7 @@ An end-to-end data analytics project built using U.S. Census retail data to anal
 
 ## 🚀 Project Overview
 
-This project converts raw retail sales data into actionable insights using a structured three-layer analytics approach:
+This project converts raw retail sales data into actionable insights using a structured three-layer analytics approach (Macro → Risk → Category):
 
 - 📈 **Revenue Signal Engine** → Macro-level growth analysis  
 - ⚠️ **Risk & Opportunity Engine** → Volatility and forecasting  
@@ -20,12 +20,14 @@ This project converts raw retail sales data into actionable insights using a str
 - Source: U.S. Census Bureau (Monthly Retail Trade Survey)  
 - Format: 34 CSV files (1992–2025)  
 
+---
+
 ### ⚙️ ETL Process
 - Tool: Python (Pandas, NumPy)  
 - Cleaned and standardized data  
 - Merged multiple files into a single dataset  
 
-**Output:** Master dataset (~4,500 rows)
+**Output:** High-quality master dataset (~4,500 rows)
 
 ---
 
@@ -57,7 +59,7 @@ This project converts raw retail sales data into actionable insights using a str
 ## 📁 Dashboard 1 — Revenue Signal Engine  
 ### U.S. Retail Macro Performance (1992–2025)
 
-🔗 **Live Dashboard:** https://bit.ly/us-retail-macro-signals
+🔗 **Live Dashboard:** https://bit.ly/us-retail-revenue-engine
 
 🖼️ **Screenshot:**  
 ![Dashboard 1](04_assets/1_revenue_signal_engine.jpeg)
@@ -83,7 +85,7 @@ Focuses on demand volatility, stability, and forecasting trends.
 ## 📁 Dashboard 3 — Demand Intelligence Engine  
 ### Category Performance, Efficiency & Distribution
 
-🔗 **Live Dashboard:** https://bit.ly/us-retail-category-intel
+🔗 **Live Dashboard:** https://bit.ly/us-retail-demand-engine
 
 🖼️ **Screenshot:**  
 ![Dashboard 3](04_assets/3_demand_intelligence_engine.jpeg)
@@ -116,19 +118,23 @@ Analyzes category-level performance, efficiency, and revenue distribution.
 
 - U.S. Census Data  
   ↓  
-- Python (Data Cleaning)  
+- Python (Data Cleaning & Preprocessing)  
   ↓  
-- Supabase (PostgreSQL)  
+- Supabase (PostgreSQL – Data Storage)  
   ↓  
-- Metabase (Dashboards)  
+- Metabase (SQL Analysis & Dashboard Layer)  
   ↓  
-- Hugging Face (Hosting)  
+- Hugging Face (Hosting & Deployment)  
   ↓  
 - Public Links (Bitly)  
 
-
 ---
 
-## 👩‍💻 Author
+## 📬 Contact
 
-**K Jevaneswari**
+If you have any feedback or opportunities, feel free to connect:
+
+- 🔗 LinkedIn: https://www.linkedin.com/in/jevaneswari-k-937a312a0  
+- 💻 GitHub: https://github.com/JevaneswariK   
+
+---
