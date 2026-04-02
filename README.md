@@ -113,17 +113,18 @@ Analyzes category-level performance, efficiency, and revenue distribution.
 ---
 
 ## 🧩 Project Architecture
-U.S. Census Data
-↓
-Python (Data Cleaning)
-↓
-Supabase (PostgreSQL)
-↓
-Metabase (Dashboards)
-↓
-Hugging Face (Hosting)
-↓
-Public Links (Bitly)
+
+- U.S. Census Data  
+  ↓  
+- Python (Data Cleaning)  
+  ↓  
+- Supabase (PostgreSQL)  
+  ↓  
+- Metabase (Dashboards)  
+  ↓  
+- Hugging Face (Hosting)  
+  ↓  
+- Public Links (Bitly)  
 
 
 ---
